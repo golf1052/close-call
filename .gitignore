@@ -2,6 +2,7 @@
 .idea/
 
 .DS_Store
+*.swp
 
 # secrets
 config.py

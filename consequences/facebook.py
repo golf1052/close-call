@@ -2,10 +2,12 @@ import requests
 import urllib
 import sys
 from pymongo import MongoClient
+
 sys.path.append('../')
 import config
 
 access_token = ''
+
 
 # Connects to mongo and returns a MongoClient
 def connect_to_mongo():
@@ -17,6 +19,7 @@ def connect_to_mongo():
     client = MongoClient(connection_url)
     return client[db]
 
+
 # Get facebook access token
 def get_access_token(phone):
     db = connect_to_mongo()
@@ -26,17 +29,23 @@ def get_access_token(phone):
     print access_token
     get_old_post(phone)
 
+
 # Get last_date used
 def get_last_date(phone):
     db = connect_to_mongo()
     last_date_dict = db.users.find_one({'phone_number': phone}, {'consequences.facebook.last_date': 1, '_id': 0})
-    last_date = last_date_dict['consequences']['facebook']['last_date']
+    if 'last_date' in last_date_dict['consequences']['facebook']:
+        last_date = last_date_dict['consequences']['facebook']['last_date']
+    else:
+        last_date = 0
     print 'Last date : ' + str(last_date)
     return last_date
 
+
 # Update the last_date used for getting a user's post
 def update_last_date(phone, date):
-    return date
+    return None
+
 
 # Get earliest unused facebook post
 def get_old_post(phone):
@@ -45,22 +54,28 @@ def get_old_post(phone):
     if last_date is None:
         print "No last date found, resetting to 0"
         last_date = 0
-    query = 'SELECT post_id, message, permalink, created_time ' \
-        'FROM stream ' \
-        'WHERE source_id = me() ' \
-        'AND is_hidden != \"true\" ' \
-        'AND type = 46 ' \
-        'AND created_time > ' + str(last_date) + ' ' \
-        'ORDER BY created_time ASC ' \
-        'LIMIT 5'
-    params = urllib.urlencode({'q': query, 'access_token': access_token})
-    response_json = requests.get('https://graph.facebook.com/v2.0/fql?' + params).json()
-    post_dict = {'post_id': response_json['data'][0]['post_id'], 'post': response_json['data'][0]['message']}
-    print post_dict
+
+    fields = 'id,created_time,updated_time,message,likes'
+    until = '1453587145'
+    filter = 'app_2915120374'
+    limit = '50'
+
+    params = {'fields': fields,
+              'until': until,
+              'filter': filter,
+              'limit': limit,
+              'access_token': access_token}
+
+    response_json = requests.get('https://graph.facebook.com/v2.5/me/posts', params=params).json()
+    print response_json
+    # post_dict = {'post_id': response_json['data'][0]['post_id'], 'post': response_json['data'][0]['message']}
+    # print post_dict
+
 
 # Share post
 def share_post_using_id(post_id):
-    
+    return None
+
 def main():
     get_access_token("9145632336")
 

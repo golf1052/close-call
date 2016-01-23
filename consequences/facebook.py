@@ -74,8 +74,7 @@ def get_old_post(phone):
 
 # Share post
 def share_post_using_id(post_id):
-    return None
-
+    pass
 def main():
     get_access_token("9145632336")
 

@@ -1,6 +1,9 @@
-from flask import Flask, render_template, session, redirect, url_for, request, flash
+from flask import Flask, render_template, session, redirect, request, flash
 from flask_oauth import OAuth
 import config
+from consequences import facebook as fb_con
+from core import core
+from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -32,16 +35,35 @@ def get_facebook_token(token=None):
     return session.get('facebook_token')
 
 
+def create_datetime(hour_min_str):
+    ptime = datetime.strptime(hour_min_str, "%H:%M")
+    print ptime
+    return ptime
+
+
 @app.route("/")
 def index():
     return render_template("index.html", session=session)
 
+
 @app.route("/submit-call", methods=['POST'])
 def submit_call():
     print request.form
-    time = request['time']
-    phone = request['phone']
-    # TODO: write some stuff to mongo
+    time = request.form['time']
+    phone_number = request.form['phone']
+    # connect and write token to mongo
+    # later we can have a dict that gets updated based on what tokens are present
+    db = fb_con.connect_to_mongo()
+    update_status = db.users.update(
+        {'phone_number': phone_number},
+        {'$set': {'consequences.facebook.access_token': session['facebook_token']}},
+        True
+    )
+    print update_status
+
+    # schedule a call
+    core.schedule(create_datetime(time), 'facebook', phone_number)
+
     return render_template("index.html", session=session)
 
 
@@ -49,7 +71,7 @@ def submit_call():
 def login_facebook():
     # return facebook.authorize(callback=url_for('oauth_authorized',
     return facebook.authorize(callback="http://localhost:5000/facebook-oauth-authorized")
-        # next=request.args.get('next') or request.referrer or None)
+    # next=request.args.get('next') or request.referrer or None)
 
 
 @app.route('/facebook-oauth-authorized')

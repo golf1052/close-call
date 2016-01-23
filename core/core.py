@@ -19,7 +19,6 @@ def schedule(time, consequence, number):
     # something like this. The syntax is time, method, args
     # time should be a UTC datetime object, consequence is one of: 'facebook', number is a 10 digit int
     twilio_call = lambda x: 1
-    scheduler.enqueue_at(time, twilio_call, number, consequence)
     if consequence is "facebook":
         old_post = facebook.main()
     # something like this. The syntax is time, method, args, kwargs

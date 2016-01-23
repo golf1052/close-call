@@ -1,6 +1,8 @@
 #IDE
 .idea/
 
+.DS_Store
+
 # secrets
 config.py
 

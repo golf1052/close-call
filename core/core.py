@@ -17,10 +17,18 @@ def connect_to_mongo():
 def schedule(time, consequence, number):
     if consequence is "facebook":
         old_post = facebook.main()
-    #something like this. The syntax is time, method, args
-    scheduler.enqueue_at(strptime(time), twilio.call, number, old_post) # Date time should be in UTC
+    #something like this. The syntax is time, method, args, kwargs
+    scheduler.enqueue_at(time, twilio.call, None, 'old_post'=old_post, 'number'=number)  # Date time should be in UTC
 
+def get_jobs(number):
+    jobs = scheduler.get_jobs(with_times=True)
+    matches = []
+    for job in jobs:
+      if job.kwargs.number = number:
+          matches.append(job)
+    return matches
 
 def unschedule(number):
-    if user.job_id in scheduler.get_jobs():
+    if job_id in scheduler.get_jobs():
         scheduler.cancel(user.job_id)
+    else raise TypeError("No such job ID " + job_id + " found! ")

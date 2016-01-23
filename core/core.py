@@ -5,7 +5,7 @@ from datetime import datetime
 from pymongo import mongo
 
 scheduler = Scheduler(connection=Redis())
-client = pymongo.MongoClient("mongodb://admin:yhackslackpack@104.131.125.189:27017")
+client = pymongo.MongoClient("mongodb://" + config.MONGO_USER + config.MONGO_PW + "@" + MONGO_IP)
 db = client.admin
 
 

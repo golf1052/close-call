@@ -4,6 +4,7 @@ from rq_scheduler import Scheduler
 from datetime import datetime
 import pymongo
 import config
+import consequences.facebook as facebook
 
 scheduler = Scheduler(connection=Redis())
 
@@ -14,8 +15,10 @@ def connect_to_mongo():
 
 
 def schedule(time, consequence, number):
+    if consequence is "facebook":
+        old_post = facebook.main()
     #something like this. The syntax is time, method, args
-    scheduler.enqueue_at(strptime(time), twilio.call, number, consequence) # Date time should be in UTC
+    scheduler.enqueue_at(strptime(time), twilio.call, number, old_post) # Date time should be in UTC
 
 
 def unschedule(number):

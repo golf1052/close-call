@@ -28,7 +28,7 @@ def get_jobs(number):
           matches.append(job)
     return matches
 
-def unschedule(number):
+def unschedule(job_id):
     if job_id in scheduler.get_jobs():
         scheduler.cancel(user.job_id)
     else raise TypeError("No such job ID " + job_id + " found! ")

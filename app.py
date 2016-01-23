@@ -1,5 +1,9 @@
 from flask import Flask, render_template, session, redirect, url_for, request, flash
 from flask_oauth import OAuth
+import config
+
+app = Flask(__name__)
+app.config.from_object(config)
 
 oauth = OAuth()
 facebook = oauth.remote_app('facebook',
@@ -7,8 +11,8 @@ facebook = oauth.remote_app('facebook',
     request_token_url=None,
     access_token_url='/oauth/access_token',
     authorize_url='https://www.facebook.com/dialog/oauth',
-    consumer_key=***REMOVED***,
-    consumer_secret='***REMOVED***',
+    consumer_key=app.config['FACEBOOK_CONSUMER_KEY'],
+    consumer_secret=app.config['FACEBOOK_CONSUMER_SECRET'],
     request_token_params={'scope': 'email'}
 )
 '''
@@ -21,7 +25,6 @@ twitter = oauth.remote_app('twitter',
     consumer_secret='<your secret here>'
 )
 '''
-app = Flask(__name__)
 
 
 @facebook.tokengetter
@@ -50,23 +53,15 @@ def oauth_authorized(resp):
         flash(u'You denied the request to sign in.')
         return redirect(next_url)
 
-    # session['facebook_token'] = (
-        # resp['oauth_token'],
-        # resp['oauth_token_secret']
-    # )
     session['facebook_token'] = resp['access_token']
     session['facebook_token_expires'] = resp['expires']
-    # session['facebook_user'] = resp['screen_name']
 
     flash('You were signed in to Facebook with token %s' % resp['access_token'])
-    # flash(str(resp))
     return redirect(next_url)
 
 if __name__ == "__main__":
-    app.secret_key = '***REMOVED***'
+    app.secret_key = app.config['APP_SECRET_KEY']
     app.config['SESSION_TYPE'] = 'filesystem'
-
-    # .init_app(app)
 
     app.debug = True
     app.run()

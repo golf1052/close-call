@@ -9,4 +9,5 @@ rq>=0.5.6
 rq_scheduler>=0.5.1
 Werkzeug>=0.11.3
 wheel>=0.26.0
+pymongo>=3.2
 

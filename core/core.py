@@ -2,7 +2,7 @@ from redis import Redis
 from rq import Queue
 from rq_scheduler import Scheduler
 from datetime import datetime
-from pymongo import mongo
+import pymongo
 import config
 
 scheduler = Scheduler(connection=Redis())
@@ -15,11 +15,11 @@ def schedule(time, token, module, number):
     new_id = scheduler.enqueue_at(strptime(time), twilio.call, token, name) # Date time should be in UTC
     #this is still a dumb schema
     db.closecall.users.update(
-      { "phone_number" : number },
-      { $set: { "job" : new_id  }},
-      )
+        {"phone_number": number},
+        {"$set": {"job_id": new_id}},
+    )
 
-def unschedule(key):
-    #get jobid from mongo using key/token?
-    if job_id in scheduler.get_jobs():
-        scheduler.cancel(job_id)
+def unschedule(number):
+    user = db.closecall.users.find({"phone_number": number})
+    if user.job_id in scheduler.get_jobs():
+        scheduler.cancel(user.job_id)

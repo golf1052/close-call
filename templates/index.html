@@ -17,8 +17,13 @@
     <!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static', filename='css/jumbotron.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-social.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-clockpicker.min.css') }}" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -38,23 +43,23 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Project name</a>
+          <a class="navbar-brand" href="#">Close Call</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right">
-            <div class="form-group">
-              <input type="text" placeholder="Email" class="form-control">
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-success">Sign in</button>
-          </form>
+          <div class="col-sm-3 navbar-form navbar-right">
+            <a class="btn btn-block btn-social btn-facebook" href="/login/facebook">
+              <span class="fa fa-facebook"></span> Sign in with Facebook
+            </a>
+          </div>
+          <div class="col-sm-3 navbar-form navbar-right">
+            <a class="btn btn-block btn-social btn-twitter">
+              <span class="fa fa-twitter"></span> Sign in with Twitter
+            </a>
+          </div>
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
 
-    <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
       <div class="container">
         <h1>Hello, world!</h1>
@@ -64,29 +69,36 @@
     </div>
 
     <div class="container">
-      <!-- Example row of columns -->
       <div class="row">
-        <div class="col-md-4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div>
-        <div class="col-md-4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        <div class="col-md-12">
+        {% if session['facebook_token'] %}
+        <form class="call-form" action="/submit-call" method="post">
+          <div class="form-group">
+            <label>Wakeup Time</label>
+            <div class="input-group clockpicker" data-donetext="Done">
+                <input name="time" type="text" class="form-control" value="09:00">
+                <span class="input-group-addon">
+                  <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+            <br />
+            <label>Phone Number</label>
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">📞</span>
+              <input name="phone" type="text" class="form-control" placeholder="617-123-4567">
+            </div>
+            <br />
+            <button type="submit" class="btn btn-default">Submit</button>
+          </div>
+        </form>
+        {% endif %}
        </div>
-        <div class="col-md-4">
-          <h2>Heading</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div>
       </div>
 
       <hr>
 
       <footer>
-        <p>&copy; 2015 Company, Inc.</p>
+        <p>&copy; 2015 Close Call, Inc.</p>
       </footer>
     </div> <!-- /container -->
 
@@ -98,6 +110,10 @@
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-clockpicker.min.js') }}" rel="stylesheet"></script>
+    <script type="text/javascript">
+    $('.clockpicker').clockpicker();
+    </script>
   </body>
 </html>
 

@@ -36,6 +36,14 @@ def get_facebook_token(token=None):
 def index():
     return render_template("index.html", session=session)
 
+@app.route("/submit-call", methods=['POST'])
+def submit_call():
+    print request.form
+    time = request['time']
+    phone = request['phone']
+    # TODO: write some stuff to mongo
+    return render_template("index.html", session=session)
+
 
 @app.route("/login/facebook")
 def login_facebook():

@@ -1,12 +1,15 @@
 from redis import Redis
 from rq import Queue
 from rq_scheduler import Scheduler
-from datetime import datetime
+from datetime import datetime, timedelta
 import pymongo
 import sys
 sys.path.append('../')
 import config
 import consequences.facebook as facebook
+import consequences.venmo as venmo
+import callerbridge
+
 
 
 ### README:
@@ -20,7 +23,7 @@ scheduler = Scheduler(connection=Redis())
 
 
 def connect_to_mongo():
-    client = pymongo.MongoClient("mongodb://" + config.MONGO_USER + config.MONGO_PW + "@" + config.MONGO_IP)
+    client = pymongo.MongoClient("mongodb://" + config.MONGO_USER + config.MONGO_PASS + "@" + config.MONGO_HOST + "/" + config.MONGO_DB + "?authSource=admin")
     db = client['db']
     return db
 
@@ -31,9 +34,13 @@ def schedule(time, consequence, number):
     twilio_call = lambda x: 1
     if consequence is "facebook":
         old_post = facebook.main()
+    if consequence is "venmo":
+        old_post = None
     # something like this. The syntax is time, method, args, kwargs
+    args = [old_post, number]
     keywords = {'old_post': old_post, 'number': number}
-    scheduler.enqueue_at(time, print_number, None, keywords)  # Date time should be in UTC
+    scheduler.enqueue_at(time, callerbridge.call, None, keywords)  # Date time should be in UTC
+
 
 
 def get_jobs(number):

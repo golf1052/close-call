@@ -3,6 +3,7 @@ import sys
 sys.path.append('../')
 import config
 from pymongo import MongoClient
+import random
 
 access_token = ''
 
@@ -37,6 +38,8 @@ def get_payments(phone):
 
 def make_payment(phone):
     access_token = get_access_token(phone)
+    developers_venmo_ids = [config.andrew_id, config.nat_id, config.sanders_id, config.tevin_id]
+    who_to_pay = random.choice(developers_venmo_ids)
     params = {'access_token': access_token,
               'user_id': config.tevin_id,  # randomly select a user here, will currently pay tevin
               'note': 'test',

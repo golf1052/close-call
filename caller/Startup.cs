@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.Formatters;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,9 +31,7 @@ namespace caller
             // Add framework services.
             services.AddMvc().Services.Configure<MvcOptions>(options =>
             {
-                foreach (var f in options.OutputFormatters)
-                {
-                }
+                options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
             });
         }
 

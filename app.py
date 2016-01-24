@@ -43,7 +43,7 @@ def index():
     
 @app.route("/dance")
 def dance():
-    return render_template("dance/index.html);
+    return render_template("dance/index.html");
 
 
 def mongo_update(phone_number, key, value):

@@ -1,11 +1,9 @@
 import requests
-import sys
 import indicoio
 import itertools
+import config
 from pymongo import MongoClient
 from collections import namedtuple
-sys.path.append('../')
-import config
 
 access_token = ''
 

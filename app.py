@@ -62,17 +62,13 @@ def submit_call():
     # connect and write token to mongo
     if session['facebook_token']:
         fb_status = mongo_update(phone_number, 'consequences.facebook.access_token', session['facebook_token'])
+        core.schedule(create_datetime(time), 'facebook', phone_number)
+        print fb_status
+
     if session['venmo_token']:
         venmo_status = mongo_update(phone_number, 'consequences.venmo.access_token', session['venmo_token'])
-
-    print fb_status, venmo_status
-
-    fb_json = fb_con.get_old_post(phone_number)
-
-    # schedule a call
-    core.schedule(create_datetime(time), 'facebook', phone_number)
-
-    return render_template("index.html", session=session, fb_json=fb_json)
+        core.schedule(create_datetime(time), 'venmo', phone_number)
+        print venmo_status
 
 
 @app.route("/login/facebook")

@@ -4,12 +4,11 @@ from rq_scheduler import Scheduler
 from datetime import datetime, timedelta
 import pymongo
 import sys
+import callerbridge
 sys.path.append('../')
 import config
 import consequences.facebook as facebook
 import consequences.venmo as venmo
-import callerbridge
-
 
 
 ### README:
@@ -32,14 +31,14 @@ def schedule(time, consequence, number):
     # something like this. The syntax is time, method, args
     # time should be a UTC datetime object, consequence is one of: 'facebook', number is a 10 digit int
     twilio_call = lambda x: 1
-    if consequence is "facebook":
+    if consequence == "facebook":
         old_post = facebook.main()
-    if consequence is "venmo":
+    if consequence == "venmo":
         old_post = None
     # something like this. The syntax is time, method, args, kwargs
     args = [old_post, number]
-    keywords = {'old_post': old_post, 'number': number}
-    scheduler.enqueue_at(time, callerbridge.call, None, keywords)  # Date time should be in UTC
+    #keywords = {'old_post': old_post, 'number': number}
+    scheduler.enqueue_at(time, callerbridge.call, old_post, number)  # Date time should be in UTC
 
 
 

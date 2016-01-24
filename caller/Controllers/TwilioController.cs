@@ -63,7 +63,7 @@ namespace caller.Controllers
                 {
                     twimlPair.Item2.Add(GetSay("Good morning!"));
                     twimlPair.Item2.Add(new XElement("Pause"));
-                    twimlPair.Item2.Add(GetGather("10", bundle.BreakUpSequence()));
+                    // twimlPair.Item2.Add(GetGather("10", bundle.BreakUpSequence()));
                     string[] split = bundle.Message.Split('|');
                     twimlPair.Item2.Add(GetSay(split[0]));
                     twimlPair.Item2.Add(new XElement("Pause"));

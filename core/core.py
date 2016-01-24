@@ -8,6 +8,14 @@ sys.path.append('../')
 import config
 import consequences.facebook as facebook
 
+
+### README:
+### 1) Set up a Redis server (redis-server)
+### 2) Provide the host, port, password, uncomment the Queue in the Redis instance below (connection=Redis(#host=, port=))
+### 3) Run the rqscheduler script on the same machine as the Redis server
+### 4) Call schedule(). Should work
+
+# q = Queue("twilio-jobs")
 scheduler = Scheduler(connection=Redis())
 
 

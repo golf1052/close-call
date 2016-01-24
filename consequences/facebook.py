@@ -1,14 +1,13 @@
 import requests
 import indicoio
 import itertools
+import operator
 import config
+import random
 from pymongo import MongoClient
 from collections import namedtuple
 
-access_token = ''
-
 indicoio.config.api_key = config.INDICO_API_KEY
-
 
 # Connects to mongo and returns a MongoClient
 def connect_to_mongo():
@@ -18,7 +17,6 @@ def connect_to_mongo():
     db = config.MONGO_DB
     connection_url = "mongodb://" + user + ":" + password + "@" + host + "/" + db + "?authSource=admin"
     client = MongoClient(connection_url)
-
     return client[db]
 
 
@@ -27,31 +25,12 @@ def get_access_token(phone):
     db = connect_to_mongo()
     access_token_dict = db.users.find_one({'phone_number': phone}, {'consequences.facebook.access_token': 1, '_id': 0})
     access_token = access_token_dict['consequences']['facebook']['access_token']
-    print access_token
-
     return access_token
-
-
-# Get last_date used
-def get_last_date(phone):
-    db = connect_to_mongo()
-    last_date_dict = db.users.find_one({'phone_number': phone}, {'consequences.facebook.last_date': 1, '_id': 0})
-    if 'last_date' in last_date_dict['consequences']['facebook']:
-        last_date = last_date_dict['consequences']['facebook']['last_date']
-    else:
-        last_date = 0
-    print 'Last date : ' + str(last_date)
-    return last_date
-
-
-# Update the last_date used for getting a user's post
-def update_last_date(phone, date):
-    return None
 
 
 Post = namedtuple('Post', ['id', 'message', 'likes', 'score'])
 
-
+# Score post based on a bunch of heuristics determined by world renown research methods (aka trial and error)
 def score_post(likes, sentiment, tags, personalities):
     base_score = 1
 
@@ -60,23 +39,27 @@ def score_post(likes, sentiment, tags, personalities):
     likes_score = 0.1 * likes
 
     bonus_tags = {
-            'anime': 1,
+            'anime': 3,
             'art': 1,
-            'atheism': 1,
+            'atheism': 4,
             'business': 1,
-            'conspiracy': 1,
-            'drugs': 1,
+            'conspiracy': 5,
+            'drugs': 5,
             'music': 1,
-            'personal': 1,
+            'personal': 4,
             'psychology': 1,
-            'relationships': 1,
-            'romance': 1,
+            'relationships': 10,
+            'romance': 5,
             'ultimate': 1,
             'writing': 1,
+            'poetry': 3,
+            'gender_issues': 10,
+            'personal_care_and_beauty': 5,
+            'school': 5,
             }
 
-    bonus_tag_score = 0
-    tag_threshold = 0.2
+    bonus_tag_score = 5
+    tag_threshold = 0.02
 
     for tag, multiplier in bonus_tags.iteritems():
         tag_score = tags[tag]
@@ -123,10 +106,16 @@ def choose_post(response_json):
         tags = text_tags
         personalities = personality
 
+        # Sentiment analysis debugging
+        # top_tags = sorted(tags.items(), key=operator.itemgetter(1), reverse=True)
+        # top_tags = top_tags[:10]
+        # print '\n=========================================================='
+        # print post.message
+        # for key, val in top_tags: print "%s: %0.5f" % (key, val)
+
         posts_list.append(Post(post.id, post.message, post.likes, score_post(likes, sentiment, tags, personalities)))
     posts_list.sort(key=get_score, reverse=True)
-    print posts_list[:5]
-    return posts_list[0]
+    return random.choice(posts_list[:len(posts_list)/2])
 
 def get_score(post):
     return post.score
@@ -138,19 +127,15 @@ def get_old_post(phone):
     access_token = get_access_token(phone)
     print access_token
     print "GOT ACCESS TOKEN"
-    last_date = get_last_date(phone)
-    if last_date is None:
-        print "No last date found, resetting to 0"
-        last_date = 0
 
     fields = 'id,created_time,message,likes'
-    until = '1453587145'
-    filter = 'app_2915120374'
+    until = '1293876424'
+    type_filter = 'app_2915120374'
     limit = '500'
 
     params = {'fields': fields,
               'until': until,
-              'filter': filter,
+              'filter': type_filter,
               'limit': limit,
               'access_token': access_token}
 
@@ -158,10 +143,15 @@ def get_old_post(phone):
     response_json = requests.get('https://graph.facebook.com/v2.5/me/posts', params=params).json()
     if 'data' in response_json:
         print "GOT A LIST OF POSTS BACK"
+    elif 'error' in response_json:
+        return {'error': response_json['error']['type'],
+                'message': response_json['error']['message']}
+
     top_cringe = choose_post(response_json)
     return_dict = {'post_id': top_cringe.id,
                    'post': top_cringe.message}
-    print return_dict
+
+    print "post_id: %s\npost: %s" % (return_dict['post_id'], return_dict['post'])
     return return_dict
 
 
@@ -173,7 +163,7 @@ def get_post_url(post_id):
     else:
         raise Exception('This is not a valid post_id: ' + post_id)
 
-# Share post
+# Share post on facebook
 def share_post_using_id(phone, post_id):
     post_url = get_post_url(post_id)
     access_token = get_access_token(phone)
@@ -183,13 +173,16 @@ def share_post_using_id(phone, post_id):
               'access_token': access_token}
     print "POSTING TO FACEBOOK"
     response_json = requests.post('https://graph.facebook.com/v2.5/me/feed', params=params).json()
-    # ERROR CHECKING
-    print response_json
-
+    if 'error' in response_json:
+        return {'error': response_json['error']['type'],
+                'message': response_json['error']['message']}
+    else:
+        print 'SUCCESS! New Post URL is ' + get_post_url(response_json['id'])
 
 def main():
-    #share_post_using_id("9145632336", '10203497848945781_10204739673510619')
-    return get_old_post('9145632336')
+    # For Testing
+    #share_post_using_id("6172300310", '10208690008351449_215666932687')
+    return get_old_post('6172300310')
 
 if __name__ == '__main__':
     main()

@@ -3,12 +3,14 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
 using System.Net.Http;
 
 namespace caller
 {
     public static class TwilioManager
     {
+        public static string ngrokUrl = "http://1af2b38b.ngrok.io";
         static string baseUrl = "https://{0}:{1}@api.twilio.com/2010-04-01";
         static string twilioSid = "";
         static string twilioAuth = "";
@@ -36,7 +38,7 @@ namespace caller
             Dictionary<string, string> values = new Dictionary<string, string>();
             values.Add("From", twilioNumber);
             values.Add("To", number);
-            values.Add("Url", "http://e1e5bf2b.ngrok.io/api/twilio/generate");
+            values.Add("Url", ngrokUrl + "/api/twilio/generate");
             if (messages.ContainsKey(number))
             {
                 messages.Remove(number);

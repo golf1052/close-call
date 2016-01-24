@@ -160,7 +160,7 @@ def bridge_facebook():
     
 @app.route('/bridge/venmo', methods=['POST'])
 def bridge_venmo():
-    vmo.make_payment(request.args.get('number'))
+    vmo.make_payment(request.form.get('number'))
     return ''
 
 if __name__ == "__main__":

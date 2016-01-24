@@ -31,7 +31,7 @@ namespace caller
             StringBuilder builder = new StringBuilder();
             foreach (var c in Sequence)
             {
-                builder.Append(c + " ");
+                builder.Append(c + ". ");
             }
             return builder.ToString();
         }

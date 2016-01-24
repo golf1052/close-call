@@ -18,7 +18,7 @@ import consequences.venmo as venmo
 ### 4) Call schedule(). Should work
 
 # q = Queue("twilio-jobs")
-scheduler = Scheduler(connection=Redis())
+scheduler = Scheduler(connection=Redis(), interval=10)
 
 
 def connect_to_mongo():

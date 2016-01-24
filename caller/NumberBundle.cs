@@ -21,5 +21,15 @@ namespace caller
             }
             Sequence = sequence.ToString();
         }
+        
+        public string BreakUpSequence()
+        {
+            StringBuilder builder = new StringBuilder();
+            foreach (var c in Sequence)
+            {
+                builder.Append(c + " ");
+            }
+            return builder.ToString();
+        }
     }
 }

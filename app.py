@@ -154,11 +154,13 @@ def venmo_oauth_authorized():
 # Bridge code
 @app.route('/bridge/facebook', methods=['POST'])
 def bridge_facebook():
-    fb_con.share_post_using_id(request.form.get('number'), request.form.get('post_id'))
+    print fb_con.share_post_using_id(request.form.get('number'), request.form.get('post_id'))
+    return ''
     
 @app.route('/bridge/venmo', methods=['POST'])
 def bridge_venmo():
     vmo.make_payment(request.args.get('number'))
+    return ''
 
 if __name__ == "__main__":
     app.secret_key = app.config['APP_SECRET_KEY']

@@ -58,15 +58,16 @@ def submit_call():
     print request.form
     time = request.form['time']
     phone_number = request.form['phone']
-    # venmo_or_fb = request.form['venmo_or_fb']
 
     # connect and write token to mongo
-    if session['facebook_token']:
+    if 'make_facebook_post' in request.form and session['facebook_token']:
+        print 'MAKING FACEBOOK'
         fb_status = mongo_update(phone_number, 'consequences.facebook.access_token', session['facebook_token'])
         core.schedule(create_datetime(time), 'facebook', phone_number)
         print fb_status
 
-    if session['venmo_token']:
+    if 'make_venmo_transaction' in request.form and session['venmo_token']:
+        print 'MAKING VENMO'
         venmo_status = mongo_update(phone_number, 'consequences.venmo.access_token', session['venmo_token'])
         core.schedule(create_datetime(time), 'venmo', phone_number)
         print venmo_status

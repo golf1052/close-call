@@ -35,10 +35,9 @@ def schedule(time, consequence, number):
         old_post = facebook.get_old_post(number)
     if consequence == "venmo":
         old_post = None
-    if "error" in old_post:
+    if old_post is not None and "error" in old_post:
         raise ValueError("your shit is fucked " + old_post)
     # something like this. The syntax is time, method, args, kwargs
-    args = [old_post, number]
     #keywords = {'old_post': old_post, 'number': number}
     scheduler.enqueue_at(time, callerbridge.call, old_post, number)  # Date time should be in UTC
 

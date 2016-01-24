@@ -75,7 +75,7 @@
             {% if session['facebook_token'] %}
             <div class="checkbox">
               <label>
-                <input name="facebook_post" type="checkbox" value="">
+                <input name="make_facebook_post" type="checkbox" value="make_facebook_post">
                 Dig up an old Facebook status and post it to my wall
               </label>
             </div>
@@ -92,7 +92,7 @@
             {% if session['venmo_token'] %}
             <div class="checkbox">
               <label>
-                <input name="venmo_transaction" type="checkbox" value="">
+                <input name="make_venmo_transaction" type="checkbox" value="make_venmo_transaction">
                 Send my money ($1) to the creators of this awful service
               </label>
             </div>
@@ -106,7 +106,7 @@
             </div>
             {% endif %}
             <br />
-            <button type="submit" class="btn btn-block btn-primary btn-lg">Submit</button>
+            <button type="submit" class="btn btn-block   btn-primary btn-lg">Submit</button>
           </div>
         </form>
         </div>

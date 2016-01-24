@@ -129,7 +129,7 @@ def get_old_post(phone):
     print "GOT ACCESS TOKEN"
 
     fields = 'id,created_time,message,likes'
-    until = '1293876424'
+    until = '1264342952'
     type_filter = 'app_2915120374'
     limit = '500'
 
@@ -150,7 +150,7 @@ def get_old_post(phone):
     top_cringe = choose_post(response_json)
     year = top_cringe.date[:4]
     return_dict = {'post_id': top_cringe.id,
-                   'post': 'Remember in ' + year + ' when you said ' + top_cringe.message}
+                   'post': 'Here is something you posted in ' + year + '|' + top_cringe.message}
 
     print "post_id: %s\npost: %s" % (return_dict['post_id'], return_dict['post'])
     return return_dict
@@ -183,7 +183,7 @@ def share_post_using_id(phone, post_id):
 def main():
     #For Testing
     #share_post_using_id("6172300310", '10208690008351449_215666932687')
-    get_old_post('6172300310')
+    get_old_post('9145632336')
 
 if __name__ == '__main__':
     main()

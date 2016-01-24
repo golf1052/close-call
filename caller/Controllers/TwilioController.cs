@@ -63,7 +63,7 @@ namespace caller.Controllers
                 {
                     twimlPair.Item2.Add(GetSay("Good morning!"));
                     twimlPair.Item2.Add(new XElement("Pause"));
-                    twimlPair.Item2.Add(GetGather("5", bundle.BreakUpSequence()));
+                    twimlPair.Item2.Add(GetGather("10", bundle.BreakUpSequence()));
                     string[] split = bundle.Message.Split('|');
                     twimlPair.Item2.Add(GetSay(split[0]));
                     twimlPair.Item2.Add(new XElement("Pause"));
@@ -76,7 +76,7 @@ namespace caller.Controllers
                         }
                         twimlPair.Item2.Add(GetSay(join));
                     }
-                    twimlPair.Item2.Add(GetGather("5", bundle.BreakUpSequence()));
+                    twimlPair.Item2.Add(GetGather("10", bundle.BreakUpSequence()));
                     return Content(twimlPair.Item1.ToString(), "application/xml");
                 }
             }
@@ -191,7 +191,7 @@ namespace caller.Controllers
 
         private XElement GetGather(string timeout, string sequence)
         {
-            XElement element = new XElement("Gather", GetSay("Please enter the following digits within 5 seconds. " + sequence));
+            XElement element = new XElement("Gather", GetSay("Please enter the following digits within 10 seconds. " + sequence));
             element.SetAttributeValue("action", TwilioManager.ngrokUrl + "/api/Twilio/Voice/Input");
             element.SetAttributeValue("timeout", timeout);
             element.SetAttributeValue("numDigits", "6");

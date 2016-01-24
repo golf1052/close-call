@@ -1,11 +1,16 @@
 import requests
 import sys
 import config
+import indicoio
+import itertools
 from pymongo import MongoClient
+from collections import namedtuple
 
 sys.path.append('../')
 
 access_token = ''
+
+indicoio.config.api_key = config.INDICO_API_KEY
 
 
 # Connects to mongo and returns a MongoClient
@@ -47,6 +52,50 @@ def update_last_date(phone, date):
     return None
 
 
+Post = namedtuple('Post', ['id', 'message', 'likes', 'score'])
+
+
+def score_post(likes, sentiment, tags, personalities):
+    base_score = 1
+    return base_score
+
+
+def choose_post(response_json):
+    posts = []
+    posts_messages = []
+    data = response_json['data']
+    for post in data.iteritems():
+        if 'message' not in post:
+            continue
+
+        likes = 0
+
+        if 'likes' in post:
+            likes = len(post['likes'])
+
+        posts.append(Post(post['id'], post['message'], likes, None))
+        posts_messages.append(post['message'])
+
+    apis = ['sentiment_hq', 'text_tags', 'personality']
+
+    analyses = indicoio.analyze_text(posts_messages, apis=apis)
+
+    for post, analysis in itertools.izip(posts, analyses):
+        likes = post.likes
+        sentiment = analysis['sentiment_hq']
+        tags = analysis['text_tags']
+        personalities = analysis['personality']
+
+        post.score = score_post(likes, sentiment, tags, personalities)
+
+    def get_score(post):
+        return post.score
+
+    posts.sort(key=get_score)
+
+    return posts[0]
+
+
 # Get earliest unused facebook post
 def get_old_post(phone):
     # global access_token
@@ -73,7 +122,7 @@ def get_old_post(phone):
     print "MAKING REQUEST"
     response_json = requests.get('https://graph.facebook.com/v2.5/me/posts', params=params).json()
     print response_json
-    return response_json
+    return choose_post(response_json)
 
 
 # Share post

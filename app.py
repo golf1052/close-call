@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, redirect, request, flash
+from flask import Flask, render_template, session, redirect, request, flash, url_for
 from flask_oauth import OAuth
 from consequences import facebook as fb_con
 from core import core
@@ -12,6 +12,7 @@ app = Flask(__name__)
 app.config.from_object(config)
 
 oauth = OAuth()
+
 facebook = oauth.remote_app('facebook',
     base_url='https://graph.facebook.com/',
     request_token_url=None,
@@ -21,17 +22,6 @@ facebook = oauth.remote_app('facebook',
     consumer_secret=app.config['FACEBOOK_CONSUMER_SECRET'],
     request_token_params={'scope': 'user_posts,publish_actions'}
 )
-
-'''
-twitter = oauth.remote_app('twitter',
-    base_url='https://api.twitter.com/1/',
-    request_token_url='https://api.twitter.com/oauth/request_token',
-    access_token_url='https://api.twitter.com/oauth/access_token',
-    authorize_url='https://api.twitter.com/oauth/authenticate',
-    consumer_key='<your key here>',
-    consumer_secret='<your secret here>'
-)
-'''
 
 
 @facebook.tokengetter
@@ -50,20 +40,32 @@ def index():
     return render_template("index.html", session=session)
 
 
+def mongo_update(phone_number, key, value):
+    db = fb_con.connect_to_mongo()
+
+    update_status = db.users.update(
+        {'phone_number': phone_number},
+        {'$set': {key: value}},
+        True
+    )
+
+    return update_status
+
+
 @app.route("/submit-call", methods=['POST'])
 def submit_call():
     print request.form
     time = request.form['time']
     phone_number = request.form['phone']
+    # venmo_or_fb = request.form['venmo_or_fb']
+
     # connect and write token to mongo
-    # later we can have a dict that gets updated based on what tokens are present
-    db = fb_con.connect_to_mongo()
-    update_status = db.users.update(
-        {'phone_number': phone_number},
-        {'$set': {'consequences.facebook.access_token': session['facebook_token']}},
-        True
-    )
-    print update_status
+    if session['facebook_token']:
+        fb_status = mongo_update(phone_number, 'consequences.facebook.access_token', session['facebook_token'])
+    if session['venmo_token']:
+        venmo_status = mongo_update(phone_number, 'consequences.venmo.access_token', session['venmo_token'])
+
+    print fb_status, venmo_status
 
     fb_json = fb_con.get_old_post(phone_number)
 
@@ -75,9 +77,16 @@ def submit_call():
 
 @app.route("/login/facebook")
 def login_facebook():
-    # return facebook.authorize(callback=url_for('oauth_authorized',
     return facebook.authorize(callback="http://localhost:5000/facebook-oauth-authorized")
-    # next=request.args.get('next') or request.referrer or None)
+
+
+@app.route("/login/venmo")
+def login_venmo():
+    return redirect('https://api.venmo.com/v1/oauth/authorize?client_id={client_id}&scope={scope}&response_type=code&redirect_uri={redirect_uri}'.format(
+        client_id=app.config['VENMO_CLIENT_ID'],
+        scope='make_payments,access_friends,access_payment_history,access_feed',
+        redirect_uri='http://localhost:5000/venmo-oauth-authorized'
+        ))
 
 
 def extend_facebook_token(existing_token):
@@ -104,7 +113,7 @@ def extend_facebook_token(existing_token):
 
 @app.route('/facebook-oauth-authorized')
 @facebook.authorized_handler
-def oauth_authorized(resp):
+def facebook_oauth_authorized(resp):
     next_url = request.args.get('next') or 'http://localhost:5000/'
     if resp is None:
         flash(u'You denied the request to sign in.')
@@ -120,6 +129,28 @@ def oauth_authorized(resp):
 
     flash('You were signed in to Facebook with token %s' % resp['access_token'])
     return redirect(next_url)
+
+
+@app.route('/venmo-oauth-authorized')
+def venmo_oauth_authorized():
+    auth_code = request.args.get('code')
+
+    data = {
+            'client_id': app.config['VENMO_CLIENT_ID'],
+            'client_secret': app.config['VENMO_CLIENT_SECRET'],
+            'code': auth_code,
+            }
+
+    response = requests.post('https://api.venmo.com/v1/oauth/access_token', data)
+    resp = response.json()
+
+    session['venmo_token'] = resp['access_token']
+    session['venmo_user'] = resp['user']['username']
+    session['venmo_refresh_token'] = resp['refresh_token']
+    session['venmo_token_expires'] = resp['expires_in']
+
+    flash('You were signed in to venmo with username %s token %s' % (resp['user']['username'], resp['access_token']))
+    return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.secret_key = app.config['APP_SECRET_KEY']

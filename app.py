@@ -39,11 +39,6 @@ def create_datetime(hour_min_str):
 @app.route("/")
 def index():
     return render_template("index.html", session=session)
-    
-    
-@app.route("/dance")
-def old_index():
-    return render_template("../../hotlinering/index.html")
 
 
 def mongo_update(phone_number, key, value):

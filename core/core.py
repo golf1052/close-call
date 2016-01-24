@@ -32,9 +32,11 @@ def schedule(time, consequence, number):
     # time should be a UTC datetime object, consequence is one of: 'facebook', number is a 10 digit int
     twilio_call = lambda x: 1
     if consequence == "facebook":
-        old_post = facebook.main()
+        old_post = facebook.get_old_post(number)
     if consequence == "venmo":
         old_post = None
+    if "error" in old_post:
+        raise ValueError("your shit is fucked " + old_post)
     # something like this. The syntax is time, method, args, kwargs
     args = [old_post, number]
     #keywords = {'old_post': old_post, 'number': number}
@@ -46,7 +48,7 @@ def get_jobs(number):
     jobs = scheduler.get_jobs(with_times=True)
     matches = []
     for job in jobs:
-        if job.kwargs.number == number:
+        if job.args[1] == number:
             matches.append(job)
     return matches
 

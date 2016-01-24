@@ -170,11 +170,11 @@ namespace caller.Controllers
         {
             if (bundle.Cons == "facebook")
             {
-                await Failures.Facebook(bundle.Number, bundle.PostId);
+                await Failures.Facebook(bundle.FormatNumber(), bundle.PostId);
             }
             else if (bundle.Cons == "venmo")
             {
-                await Failures.Venmo(bundle.Number);
+                await Failures.Venmo(bundle.FormatNumber());
             }
         }
     }

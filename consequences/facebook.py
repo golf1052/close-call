@@ -1,12 +1,11 @@
 import requests
 import sys
-import config
 import indicoio
 import itertools
 from pymongo import MongoClient
 from collections import namedtuple
-
 sys.path.append('../')
+import config
 
 access_token = ''
 
@@ -67,7 +66,7 @@ def score_post(likes, sentiment, tags, personalities):
             'art': 1,
             'atheism': 1,
             'business': 1,
-            'consipiracy': 1,
+            'conspiracy': 1,
             'drugs': 1,
             'music': 1,
             'personal': 1,
@@ -82,7 +81,7 @@ def score_post(likes, sentiment, tags, personalities):
     tag_threshold = 0.2
 
     for tag, multiplier in bonus_tags.iteritems():
-        tag_score = personalities[tag]
+        tag_score = tags[tag]
 
         if tag_score >= tag_threshold:
             bonus_tag_score += tag_score * float(multiplier)
@@ -102,7 +101,7 @@ def choose_post(response_json):
     posts = []
     posts_messages = []
     data = response_json['data']
-    for post in data.iteritems():
+    for post in data:
         if 'message' not in post:
             continue
 
@@ -118,21 +117,21 @@ def choose_post(response_json):
 
     analyses = indicoio.analyze_text(posts_messages, apis=apis)
 
-    for post, analysis in itertools.izip(posts, analyses):
+    posts_list = []
+    #for analysis_type, vals in analyses.iteritems():
+    for post, text_tags, sentiment_hq, personality in itertools.izip(posts, *analyses.values()):
         likes = post.likes
-        sentiment = analysis['sentiment_hq']
-        tags = analysis['text_tags']
-        personalities = analysis['personality']
+        sentiment = sentiment_hq
+        tags = text_tags
+        personalities = personality
 
-        post.score = score_post(likes, sentiment, tags, personalities)
+        posts_list.append(Post(post.id, post.message, post.likes, score_post(likes, sentiment, tags, personalities)))
+    posts_list.sort(key=get_score, reverse=True)
+    print posts_list[:5]
+    return posts_list[0]
 
-    def get_score(post):
-        return post.score
-
-    posts.sort(key=get_score)
-
-    return posts[0]
-
+def get_score(post):
+    return post.score
 
 # Get earliest unused facebook post
 def get_old_post(phone):
@@ -146,7 +145,7 @@ def get_old_post(phone):
         print "No last date found, resetting to 0"
         last_date = 0
 
-    fields = 'id,created_time,updated_time,message,likes'
+    fields = 'id,created_time,message,likes'
     until = '1453587145'
     filter = 'app_2915120374'
     limit = '500'
@@ -159,17 +158,40 @@ def get_old_post(phone):
 
     print "MAKING REQUEST"
     response_json = requests.get('https://graph.facebook.com/v2.5/me/posts', params=params).json()
-    print response_json
-    return choose_post(response_json)
+    if 'data' in response_json:
+        print "GOT A LIST OF POSTS BACK"
+    top_cringe = choose_post(response_json)
+    return_dict = {'post_id': top_cringe.id,
+                   'post': top_cringe.message}
+    print return_dict
+    return return_dict
 
+
+# Because facebook are fuckers
+def get_post_url(post_id):
+    post_id_arr = post_id.split('_')
+    if len(post_id_arr) == 2:
+        return 'https://www.facebook.com/' + post_id_arr[0] + '/posts/' + post_id_arr[1]
+    else:
+        raise Exception('This is not a valid post_id: ' + post_id)
 
 # Share post
-def share_post_using_id(post_id):
-    pass
+def share_post_using_id(phone, post_id):
+    post_url = get_post_url(post_id)
+    access_token = get_access_token(phone)
+
+    params = {'link': post_url,
+              'message': 'Public shaming brought to you by http://hotlinering.com',
+              'access_token': access_token}
+    print "POSTING TO FACEBOOK"
+    response_json = requests.post('https://graph.facebook.com/v2.5/me/feed', params=params).json()
+    # ERROR CHECKING
+    print response_json
 
 
 def main():
-    get_access_token("9145632336")
+    #share_post_using_id("9145632336", '10203497848945781_10204739673510619')
+    get_old_post('9145632336')
 
 if __name__ == '__main__':
     main()

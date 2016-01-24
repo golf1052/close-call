@@ -34,16 +34,17 @@ def create_datetime(hour_min_str):
     # ptime = datetime.datetime.strptime(hour_min_str, "%H:%M")
     ptime = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime(hour_min_str, "%H:%M").time())
     print ptime
-    return ptime 
+    return ptime
+
 
 @app.route("/")
 def index():
     return render_template("index.html", session=session)
-    
-    
+
+
 @app.route("/dance")
 def dance():
-    return render_template("dance/index.html");
+    return render_template("dance/index.html")
 
 
 def mongo_update(phone_number, key, value):
@@ -82,7 +83,7 @@ def submit_call():
 
 @app.route("/login/facebook")
 def login_facebook():
-    return facebook.authorize(callback="http://localhost:5000/facebook-oauth-authorized")
+    return facebook.authorize(callback="http://hotlinering.com/facebook-oauth-authorized")
 
 
 @app.route("/login/venmo")
@@ -90,7 +91,7 @@ def login_venmo():
     return redirect('https://api.venmo.com/v1/oauth/authorize?client_id={client_id}&scope={scope}&response_type=code&redirect_uri={redirect_uri}'.format(
         client_id=app.config['VENMO_CLIENT_ID'],
         scope='make_payments,access_friends,access_payment_history,access_feed',
-        redirect_uri='http://localhost:5000/venmo-oauth-authorized'
+        redirect_uri='http://hotlinering.com/venmo-oauth-authorized'
         ))
 
 
@@ -98,7 +99,7 @@ def extend_facebook_token(existing_token):
     params = {
             'client_id': app.config['FACEBOOK_APP_ID'],
             'client_secret': app.config['FACEBOOK_APP_SECRET'],
-            'redirect_uri': 'http://localhost:5000/',
+            'redirect_uri': 'http://hotlinering.com/',
             'access_token': existing_token,
             }
     response = requests.get('https://graph.facebook.com/oauth/client_code', params=params)
@@ -106,7 +107,7 @@ def extend_facebook_token(existing_token):
 
     params = {
             'client_id': app.config['FACEBOOK_APP_ID'],
-            'redirect_uri': 'http://localhost:5000/',
+            'redirect_uri': 'http://hotlinering.com/',
             'code': code,
             }
     response = requests.get('https://graph.facebook.com/oauth/access_token', params=params)
@@ -119,7 +120,7 @@ def extend_facebook_token(existing_token):
 @app.route('/facebook-oauth-authorized')
 @facebook.authorized_handler
 def facebook_oauth_authorized(resp):
-    next_url = request.args.get('next') or 'http://localhost:5000/'
+    next_url = request.args.get('next') or 'http://hotlinering.com/'
     if resp is None:
         flash(u'You denied the request to sign in.')
         return redirect(next_url)
@@ -156,13 +157,15 @@ def venmo_oauth_authorized():
 
     flash('You were signed in to venmo with username %s token %s' % (resp['user']['username'], resp['access_token']))
     return redirect(url_for('index'))
-    
+
+
 # Bridge code
 @app.route('/bridge/facebook', methods=['POST'])
 def bridge_facebook():
     print fb_con.share_post_using_id(request.form.get('number'), request.form.get('post_id'))
     return ''
-    
+
+
 @app.route('/bridge/venmo', methods=['POST'])
 def bridge_venmo():
     vmo.make_payment(request.form.get('number'))

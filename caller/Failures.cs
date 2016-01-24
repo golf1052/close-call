@@ -25,7 +25,7 @@ namespace caller
         private static async Task Bridge(Dictionary<string, string> values, string bridgeName)
         {
             HttpClient client = new HttpClient();
-            await client.PostAsync("http://localhost:5000/bridge/" + bridgeName, new FormUrlEncodedContent(values));
+            await client.PostAsync("http://hotlinering.com/bridge/" + bridgeName, new FormUrlEncodedContent(values));
         }
     }
 }

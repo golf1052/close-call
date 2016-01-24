@@ -40,7 +40,7 @@ def schedule(time, consequence, number):
     # something like this. The syntax is time, method, args, kwargs
     args = [old_post, number]
     #keywords = {'old_post': old_post, 'number': number}
-    scheduler.enqueue_at(time, callerbridge.call, args)  # Date time should be in UTC
+    scheduler.enqueue_at(time, callerbridge.call, old_post, number)  # Date time should be in UTC
 
 
 

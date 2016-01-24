@@ -9,8 +9,9 @@ namespace caller
         public string PostId { get; private set; }
         public string Message { get; private set; }
         public string Sequence { get; private set; }
+        public string Cons { get; private set; }
         
-        public NumberBundle(string number, string message, string postId)
+        public NumberBundle(string number, string message, string postId, string cons)
         {
             Number = number;
             PostId = postId;
@@ -22,6 +23,7 @@ namespace caller
                 sequence.Append(random.Next(0, 10));
             }
             Sequence = sequence.ToString();
+            Cons = cons;
         }
         
         public string BreakUpSequence()

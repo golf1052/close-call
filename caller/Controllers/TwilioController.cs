@@ -16,12 +16,26 @@ namespace caller.Controllers
         [Route("Call")]
         public async Task<bool> Call()
         {
-            if (Request.Form.ContainsKey("post_id") &&
-            Request.Form.ContainsKey("post") &&
-            Request.Form.ContainsKey("number"))
+            if (Request.Form.ContainsKey("cons"))
             {
-                await TwilioManager.MakeCall(Request.Form["number"], Request.Form["post"], Request.Form["post_id"]);
-                return true;
+                string cons = Request.Form["cons"];
+                if (cons == "facebook")
+                {
+                    if (Request.Form.ContainsKey("number"))
+                    {
+                        if (Request.Form.ContainsKey("post_id") &&
+                        Request.Form.ContainsKey("post"))
+                        {
+                            await TwilioManager.MakeCall(Request.Form["number"], Request.Form["post"], Request.Form["post_id"], cons);
+                            return true;
+                        }
+                        else
+                        {
+                            await TwilioManager.MakeCall(Request.Form["number"], "We will Venmo money to a random person.", null, cons);
+                            return true;
+                        }
+                    }
+                }
             }
             return false;
         }
@@ -50,6 +64,30 @@ namespace caller.Controllers
             return Content(twimlPair.Item1.ToString(), "application/xml");
         }
         
+        [HttpPost]
+        [Route("Voice/Status")]
+        public async Task Status()
+        {
+            if (Request.Form.ContainsKey("To"))
+            {
+                string number = Request.Form["To"];
+                NumberBundle bundle = TwilioManager.GetMessage(number);
+                if (bundle != null)
+                {
+                    // if (Request.Form["AnsweredBy"] == "human")
+                    // {
+                    //     string callStatus = Request.Form["CallStatus"];
+                    //     if (callStatus == "completed" ||
+                    //     callStatus == "in-progress" ||
+                    //     callStatus == "failed")
+                    //     {
+                    //     }
+                    // }
+                    await Fail(bundle);
+                }
+            }
+        }
+    
         [HttpPost]
         [Route("Voice/Incoming")]
         public string HandleIncomingCalls()
@@ -82,7 +120,9 @@ namespace caller.Controllers
                 {
                     if (bundle.Sequence == digits)
                     {
-                        twimlPair.Item2.Add(new XElement("Reject"));
+                        TwilioManager.RemoveNumber(number);
+                        twimlPair.Item2.Add(GetSay("You are free."));
+                        // twimlPair.Item2.Add(new XElement("Reject"));
                         return Content(twimlPair.Item1.ToString(), "application/xml");
                     }
                 }
@@ -124,6 +164,18 @@ namespace caller.Controllers
             element.SetAttributeValue("timeout", timeout);
             element.SetAttributeValue("numDigits", "6");
             return element;
+        }
+        
+        private async Task Fail(NumberBundle bundle)
+        {
+            if (bundle.Cons == "facebook")
+            {
+                await Failures.Facebook(bundle.Number, bundle.PostId);
+            }
+            else if (bundle.Cons == "venmo")
+            {
+                await Failures.Venmo(bundle.Number);
+            }
         }
     }
 }

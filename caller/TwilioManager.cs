@@ -30,20 +30,23 @@ namespace caller
             messages = new Dictionary<string, NumberBundle>();
         }
         
-        public static async Task<string> MakeCall(string number, string message, string postId)
+        public static async Task<string> MakeCall(string number, string message, string postId, string cons)
         {
             number = "+1" + number;
             string url = string.Format(baseUrl, twilioSid, twilioAuth) + string.Format("/Accounts/{0}/Calls.json", twilioSid);
             HttpClient client = new HttpClient();
-            Dictionary<string, string> values = new Dictionary<string, string>();
-            values.Add("From", twilioNumber);
-            values.Add("To", number);
-            values.Add("Url", ngrokUrl + "/api/twilio/generate");
+            List<KeyValuePair<string, string>> values = new List<KeyValuePair<string, string>>();
+            values.Add(new KeyValuePair<string, string>("From", twilioNumber));
+            values.Add(new KeyValuePair<string, string>("To", number));
+            values.Add(new KeyValuePair<string, string>("Url", ngrokUrl + "/api/twilio/generate"));
+            values.Add(new KeyValuePair<string, string>("StatusCallback", ngrokUrl + "/api/Twilio/Voice/Status"));
+            values.Add(new KeyValuePair<string, string>("StatusCallbackEvent", "completed"));
+            values.Add(new KeyValuePair<string, string>("IfMachine", "Hangup"));
             if (messages.ContainsKey(number))
             {
                 messages.Remove(number);
             }
-            messages.Add(number, new NumberBundle(number, message, postId));
+            messages.Add(number, new NumberBundle(number, message, postId, cons));
             HttpResponseMessage response = await client.PostAsync(url, new FormUrlEncodedContent(values));
             return await response.Content.ReadAsStringAsync();
         }

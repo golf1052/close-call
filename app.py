@@ -1,6 +1,7 @@
 from flask import Flask, render_template, session, redirect, request, flash, url_for
 from flask_oauth import OAuth
 from consequences import facebook as fb_con
+from consequences import venmo as vmo
 from core import core
 
 import datetime
@@ -149,6 +150,15 @@ def venmo_oauth_authorized():
 
     flash('You were signed in to venmo with username %s token %s' % (resp['user']['username'], resp['access_token']))
     return redirect(url_for('index'))
+    
+# Bridge code
+@app.route('/bridge/facebook', methods=['POST'])
+def bridge_facebook():
+    fb_con.share_post_using_id(request.form.get('number'), request.form.get('post_id'))
+    
+@app.route('/bridge/venmo', methods=['POST'])
+def bridge_venmo():
+    vmo.make_payment(request.args.get('number'))
 
 if __name__ == "__main__":
     app.secret_key = app.config['APP_SECRET_KEY']

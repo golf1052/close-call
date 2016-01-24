@@ -3,9 +3,19 @@ from rq import Queue
 from rq_scheduler import Scheduler
 from datetime import datetime
 import pymongo
+import sys
+sys.path.append('../')
 import config
 import consequences.facebook as facebook
 
+
+### README:
+### 1) Set up a Redis server (redis-server)
+### 2) Provide the host, port, password, uncomment the Queue in the Redis instance below (connection=Redis(#host=, port=))
+### 3) Run the rqscheduler script on the same machine as the Redis server
+### 4) Call schedule(). Should work
+
+# q = Queue("twilio-jobs")
 scheduler = Scheduler(connection=Redis())
 
 
@@ -22,7 +32,8 @@ def schedule(time, consequence, number):
     if consequence is "facebook":
         old_post = facebook.main()
     # something like this. The syntax is time, method, args, kwargs
-    scheduler.enqueue_at(time, twilio_call, None, old_post=old_post, number=number)  # Date time should be in UTC
+    keywords = {'old_post': old_post, 'number': number}
+    scheduler.enqueue_at(time, print_number, None, keywords)  # Date time should be in UTC
 
 
 def get_jobs(number):
@@ -36,6 +47,6 @@ def get_jobs(number):
 
 def unschedule(job_id):
     if job_id in scheduler.get_jobs():
-        scheduler.cancel(user.job_id)
+        scheduler.cancel(job_id)
     else:
         raise TypeError("No such job ID " + job_id + " found! ")

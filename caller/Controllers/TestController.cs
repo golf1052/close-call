@@ -12,7 +12,7 @@ namespace caller.Controllers
         [HttpGet]
         public async Task<string> Test()
         {
-            return await TwilioManager.MakeCall("", "");
+            return await TwilioManager.MakeCall("", "Hello this is a test of the emergency broadcast system.");
         }
     }
 }

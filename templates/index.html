@@ -36,11 +36,17 @@
   </head>
 
   <body>
-    <h1>Close Call</h1>
+    <h1>Close <span style="color: #FFF;">Call</span><i class="fa fa-phone"></i></h1>
     <div class="jumbotron">
       <div class="container">
-        <p>{{ session }}</p>
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+        <p>
+          <ul>
+            <li>Do you have trouble waking up?</li>
+            <li>Do you suffer from crippling bouts of anxiety when embarassed in social situations?</li>
+            <li>Are you horrified at the thought of reviving old facebook status updates?</li>
+            <li>Do you like sending money to strangers at hackathons?</li>
+          </ul>
+        </p>
       </div>
     </div>
 
@@ -53,15 +59,15 @@
           <div class="form-group">
             <label>Wakeup Time</label>
             <div class="input-group clockpicker" data-donetext="Done">
-                <input name="time" type="text" class="form-control" value="09:00">
-                <span class="input-group-addon">
-                  <span class="glyphicon glyphicon-time"></span>
+            <span class="input-group-addon">
+                <i class="fa fa-clock-o"></i>
                 </span>
+                <input name="time" type="text" class="form-control" value="09:00">
             </div>
             <br />
             <label>Phone Number</label>
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">📞</span>
+              <span class="input-group-addon" id="basic-addon1"><i class="fa fa-phone"></i></span>
               <input name="phone" type="text" class="form-control" placeholder="6171234567">
             </div>
             <br />
@@ -100,7 +106,7 @@
             </div>
             {% endif %}
             <br />
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-block btn-primary btn-lg">Submit</button>
           </div>
         </form>
         </div>

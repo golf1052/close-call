@@ -1,19 +1,32 @@
-/* Move down content because we have a fixed navbar that is 50px tall */
 body {
-  padding-top: 50px;
-  padding-bottom: 20px;
-}
-
-body {
+ 	padding-bottom: 20px;
+	background-image: url(/static/DSF07211.jpg);
 	padding-top: 0px;
+	font-size: 18px;
+	color: #fff;
+	background-color: #222;
+	background-blend-mode: multiply;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: right;
 }
 
 h1 {
 	font-family: 'Faster One', cursive;
 	font-size: 72px;
 	padding-left: 50px;
+	color: #DC1E06;
 }
 
 label {
 
+}
+
+li {
+	color: #fff;
+	font-size: 21px;
+}
+
+.jumbotron {
+	background-color: #333;
 }

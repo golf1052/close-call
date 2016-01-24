@@ -70,6 +70,8 @@ def submit_call():
         core.schedule(create_datetime(time), 'venmo', phone_number)
         print venmo_status
 
+    return render_template("index.html", session=session)
+
 
 @app.route("/login/facebook")
 def login_facebook():

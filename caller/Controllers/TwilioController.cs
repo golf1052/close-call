@@ -54,7 +54,18 @@ namespace caller.Controllers
                 if (bundle != null)
                 {
                     twimlPair.Item2.Add(GetGather("10", bundle.BreakUpSequence()));
-                    twimlPair.Item2.Add(GetSay(bundle.Message));
+                    string[] split = bundle.Message.Split('|');
+                    twimlPair.Item2.Add(GetSay(split[0]));
+                    twimlPair.Item2.Add(new XElement("Pause"));
+                    if (split.Length > 1)
+                    {
+                        string join = string.Empty;
+                        for (int i = 1; i < split.Length; i++)
+                        {
+                            join += split[i];
+                        }
+                        twimlPair.Item2.Add(GetSay(join));
+                    }
                     twimlPair.Item2.Add(GetGather("10", bundle.BreakUpSequence()));
                     return Content(twimlPair.Item1.ToString(), "application/xml");
                 }
@@ -126,7 +137,18 @@ namespace caller.Controllers
                         return Content(twimlPair.Item1.ToString(), "application/xml");
                     }
                 }
-                twimlPair.Item2.Add(GetSay(bundle.Message));
+                string[] split = bundle.Message.Split('|');
+                twimlPair.Item2.Add(GetSay(split[0]));
+                twimlPair.Item2.Add(new XElement("Pause"));
+                if (split.Length > 1)
+                {
+                    string join = string.Empty;
+                    for (int i = 1; i < split.Length; i++)
+                    {
+                        join += split[i];
+                    }
+                    twimlPair.Item2.Add(GetSay(join));
+                }
                 twimlPair.Item2.Add(GetGather("10", bundle.BreakUpSequence()));
                 return Content(twimlPair.Item1.ToString(), "application/xml");
             }

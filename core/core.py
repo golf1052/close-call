@@ -7,6 +7,7 @@ import sys
 sys.path.append('../')
 import config
 import consequences.facebook as facebook
+import callerbridge
 
 
 ### README:
@@ -33,7 +34,7 @@ def schedule(time, consequence, number):
         old_post = facebook.main()
     # something like this. The syntax is time, method, args, kwargs
     keywords = {'old_post': old_post, 'number': number}
-    scheduler.enqueue_at(time, print_number, None, keywords)  # Date time should be in UTC
+    scheduler.enqueue_at(time, callerbridge.call, None, keywords)  # Date time should be in UTC
 
 
 def get_jobs(number):

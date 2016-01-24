@@ -13,6 +13,18 @@ namespace caller.Controllers
     public class TwilioController : Controller
     {
         [HttpPost]
+        [Route("Call")]
+        public async Task<bool> Call()
+        {
+            if (Request.Form.ContainsKey("post") && Request.Form.ContainsKey("number"))
+            {
+                await TwilioManager.MakeCall(Request.Form["number"], Request.Form["post"]);
+                return true;
+            }
+            return false;
+        }
+        
+        [HttpPost]
         [Route("Generate")]
         public ContentResult GenerateTwiml()
         {

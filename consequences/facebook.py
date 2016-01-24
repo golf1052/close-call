@@ -57,7 +57,45 @@ Post = namedtuple('Post', ['id', 'message', 'likes', 'score'])
 
 def score_post(likes, sentiment, tags, personalities):
     base_score = 1
-    return base_score
+
+    sentiment_score = 1 / sentiment
+
+    likes_score = 0.1 * likes
+
+    bonus_tags = {
+            'anime': 1,
+            'art': 1,
+            'atheism': 1,
+            'business': 1,
+            'consipiracy': 1,
+            'drugs': 1,
+            'music': 1,
+            'personal': 1,
+            'psychology': 1,
+            'relationships': 1,
+            'romance': 1,
+            'ultimate': 1,
+            'writing': 1,
+            }
+
+    bonus_tag_score = 0
+    tag_threshold = 0.2
+
+    for tag, multiplier in bonus_tags.iteritems():
+        tag_score = personalities[tag]
+
+        if tag_score >= tag_threshold:
+            bonus_tag_score += tag_score * float(multiplier)
+
+    # low agreeableness, low conscientiousness, high extraversion
+    agreeableness = 1 / personalities['agreeableness']
+    conscientiousness = 1 / personalities['agreeableness']
+    extraversion = 1 * personalities['extraversion']
+
+    final_score = (base_score + sentiment_score + likes_score +
+                   bonus_tag_score + agreeableness + conscientiousness + extraversion)
+
+    return final_score
 
 
 def choose_post(response_json):

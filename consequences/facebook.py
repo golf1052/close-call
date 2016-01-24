@@ -28,7 +28,7 @@ def get_access_token(phone):
     return access_token
 
 
-Post = namedtuple('Post', ['id', 'message', 'likes', 'score'])
+Post = namedtuple('Post', ['id', 'date', 'message', 'likes', 'score'])
 
 # Score post based on a bunch of heuristics determined by world renown research methods (aka trial and error)
 def score_post(likes, sentiment, tags, personalities):
@@ -91,7 +91,7 @@ def choose_post(response_json):
         if 'likes' in post:
             likes = len(post['likes'])
 
-        posts.append(Post(post['id'], post['message'], likes, None))
+        posts.append(Post(post['id'], post['created_time'],post['message'], likes, None))
         posts_messages.append(post['message'])
 
     apis = ['sentiment_hq', 'text_tags', 'personality']
@@ -113,7 +113,7 @@ def choose_post(response_json):
         # print post.message
         # for key, val in top_tags: print "%s: %0.5f" % (key, val)
 
-        posts_list.append(Post(post.id, post.message, post.likes, score_post(likes, sentiment, tags, personalities)))
+        posts_list.append(Post(post.id, post.date, post.message, post.likes, score_post(likes, sentiment, tags, personalities)))
     posts_list.sort(key=get_score, reverse=True)
     return random.choice(posts_list[:len(posts_list)/2])
 
@@ -148,8 +148,9 @@ def get_old_post(phone):
                 'message': response_json['error']['message']}
 
     top_cringe = choose_post(response_json)
+    year = top_cringe.date[:4]
     return_dict = {'post_id': top_cringe.id,
-                   'post': top_cringe.message}
+                   'post': 'Remember in ' + year + ' when you said ' + top_cringe.message}
 
     print "post_id: %s\npost: %s" % (return_dict['post_id'], return_dict['post'])
     return return_dict
@@ -180,9 +181,9 @@ def share_post_using_id(phone, post_id):
         print 'SUCCESS! New Post URL is ' + get_post_url(response_json['id'])
 
 def main():
-    # For Testing
+    #For Testing
     #share_post_using_id("6172300310", '10208690008351449_215666932687')
-    return get_old_post('6172300310')
+    get_old_post('6172300310')
 
 if __name__ == '__main__':
     main()

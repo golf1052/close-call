@@ -35,5 +35,10 @@ namespace caller
             }
             return builder.ToString();
         }
+        
+        public string FormatNumber()
+        {
+            return Number.Substring(2);
+        }
     }
 }

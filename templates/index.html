@@ -12,15 +12,18 @@
     <title>Close Call</title>
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-
+<!--     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+ -->
     <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+<!--     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+ -->
+    <link href='https://fonts.googleapis.com/css?family=Faster+One' rel='stylesheet' type='text/css'>
+    <link href="{{ url_for('static', filename='css/bootstrap-cyborg.min.css') }}" rel="stylesheet">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
 
-    <!-- Custom styles for this template -->
+    <!-- Custom styles for this template -->    
     <link href="{{ url_for('static', filename='css/jumbotron.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/bootstrap-social.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/bootstrap-clockpicker.min.css') }}" rel="stylesheet">
@@ -33,36 +36,9 @@
   </head>
 
   <body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Close Call</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <div class="col-sm-3 navbar-form navbar-right">
-            <a class="btn btn-block btn-social btn-facebook" href="/login/facebook">
-              <span class="fa fa-facebook"></span> Sign in with Facebook
-            </a>
-          </div>
-          <div class="col-sm-3 navbar-form navbar-right">
-            <a class="btn btn-block btn-social btn-dropbox" href="/login/venmo">
-              <span class="fa fa-dollar"></span> Sign in with Venmo
-            </a>
-          </div>
-        </div><!--/.navbar-collapse -->
-      </div>
-    </nav>
-
+    <h1>Close Call</h1>
     <div class="jumbotron">
       <div class="container">
-        <h1>Hello, world!</h1>
         <p>{{ session }}</p>
         <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
       </div>
@@ -70,8 +46,9 @@
 
     <div class="container">
       <div class="row">
-        <div class="col-md-12">
-        {% if session['facebook_token'] %}
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-6">
         <form class="call-form" action="/submit-call" method="post">
           <div class="form-group">
             <label>Wakeup Time</label>
@@ -85,14 +62,51 @@
             <label>Phone Number</label>
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">📞</span>
-              <input name="phone" type="text" class="form-control" placeholder="617-123-4567">
+              <input name="phone" type="text" class="form-control" placeholder="6171234567">
             </div>
             <br />
-            <button type="submit" class="btn btn-default">Submit</button>
+            <label>Consequences</label>
+            {% if session['facebook_token'] %}
+            <div class="checkbox">
+              <label>
+                <input name="facebook_post" type="checkbox" value="">
+                Dig up an old Facebook status and post it to my wall
+              </label>
+            </div>
+            {% else %}
+            <div class="row">
+              <div class="col-md-6">
+                <a class="btn btn-md btn-block btn-social btn-facebook" href="/login/facebook">
+                  <span class="fa fa-facebook"></span> Sign in with Facebook
+                </a>
+              </div>
+            </div>
+            {% endif %}
+            <br />
+            {% if session['venmo_token'] %}
+            <div class="checkbox">
+              <label>
+                <input name="venmo_transaction" type="checkbox" value="">
+                Send my money ($1) to the creators of this awful service
+              </label>
+            </div>
+            {% else %}
+            <div class="row">
+              <div class="col-md-6">
+                <a class="btn btn-md btn-block btn-social btn-dropbox" href="/login/venmo">
+                  <span class="fa fa-dollar"></span> Sign in with Venmo
+                </a>
+              </div>
+            </div>
+            {% endif %}
+            <br />
+            <button type="submit" class="btn btn-primary">Submit</button>
           </div>
         </form>
-        {% endif %}
-       </div>
+        </div>
+
+        <div class="col-md-3">
+        </div>
       </div>
 
       <hr>

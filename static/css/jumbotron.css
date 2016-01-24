@@ -3,3 +3,17 @@ body {
   padding-top: 50px;
   padding-bottom: 20px;
 }
+
+body {
+	padding-top: 0px;
+}
+
+h1 {
+	font-family: 'Faster One', cursive;
+	font-size: 72px;
+	padding-left: 50px;
+}
+
+label {
+
+}

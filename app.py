@@ -30,10 +30,10 @@ def get_facebook_token(token=None):
 
 
 def create_datetime(hour_min_str):
-    ptime = datetime.datetime.strptime(hour_min_str, "%H:%M")
+    # ptime = datetime.datetime.strptime(hour_min_str, "%H:%M")
+    ptime = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime(hour_min_str, "%H:%M").time())
     print ptime
-    return ptime
-
+    return ptime 
 
 @app.route("/")
 def index():
@@ -69,6 +69,8 @@ def submit_call():
         venmo_status = mongo_update(phone_number, 'consequences.venmo.access_token', session['venmo_token'])
         core.schedule(create_datetime(time), 'venmo', phone_number)
         print venmo_status
+
+    return render_template("index.html", session=session)
 
 
 @app.route("/login/facebook")

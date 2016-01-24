@@ -16,9 +16,11 @@ namespace caller.Controllers
         [Route("Call")]
         public async Task<bool> Call()
         {
-            if (Request.Form.ContainsKey("post") && Request.Form.ContainsKey("number"))
+            if (Request.Form.ContainsKey("post_id") &&
+            Request.Form.ContainsKey("post") &&
+            Request.Form.ContainsKey("number"))
             {
-                await TwilioManager.MakeCall(Request.Form["number"], Request.Form["post"]);
+                await TwilioManager.MakeCall(Request.Form["number"], Request.Form["post"], Request.Form["post_id"]);
                 return true;
             }
             return false;

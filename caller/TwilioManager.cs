@@ -30,7 +30,7 @@ namespace caller
             messages = new Dictionary<string, NumberBundle>();
         }
         
-        public static async Task<string> MakeCall(string number, string message)
+        public static async Task<string> MakeCall(string number, string message, string postId)
         {
             number = "+1" + number;
             string url = string.Format(baseUrl, twilioSid, twilioAuth) + string.Format("/Accounts/{0}/Calls.json", twilioSid);
@@ -43,7 +43,7 @@ namespace caller
             {
                 messages.Remove(number);
             }
-            messages.Add(number, new NumberBundle(number, message));
+            messages.Add(number, new NumberBundle(number, message, postId));
             HttpResponseMessage response = await client.PostAsync(url, new FormUrlEncodedContent(values));
             return await response.Content.ReadAsStringAsync();
         }

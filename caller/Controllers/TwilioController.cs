@@ -13,6 +13,18 @@ namespace caller.Controllers
     public class TwilioController : Controller
     {
         [HttpPost]
+        [Route("Call")]
+        public async Task<bool> Call()
+        {
+            if (Request.Form.ContainsKey("post") && Request.Form.ContainsKey("number"))
+            {
+                await TwilioManager.MakeCall(Request.Form["number"], Request.Form["post"]);
+                return true;
+            }
+            return false;
+        }
+        
+        [HttpPost]
         [Route("Generate")]
         public ContentResult GenerateTwiml()
         {
@@ -25,13 +37,9 @@ namespace caller.Controllers
                 Debug.WriteLine(bundle);
                 if (bundle != null)
                 {
-                    XElement gather = new XElement("Gather");
-                    gather.SetAttributeValue("action", "http://e1e5bf2b.ngrok.io/api/Voice/Input");
-                    gather.SetAttributeValue("timeout", "10");
-                    gather.SetAttributeValue("numDigits", "6");
-                    gather.Add(GetSay("Please enter the following digits within 10 seconds." + bundle.BreakUpSequence()));
-                    twimlPair.Item2.Add(gather);
+                    twimlPair.Item2.Add(GetGather("10", bundle.BreakUpSequence()));
                     twimlPair.Item2.Add(GetSay(bundle.Message));
+                    twimlPair.Item2.Add(GetGather("10", bundle.BreakUpSequence()));
                     return Content(twimlPair.Item1.ToString(), "application/xml");
                 }
             }
@@ -72,11 +80,13 @@ namespace caller.Controllers
                 {
                     if (bundle.Sequence == digits)
                     {
-                        
                         twimlPair.Item2.Add(new XElement("Reject"));
                         return Content(twimlPair.Item1.ToString(), "application/xml");
                     }
                 }
+                twimlPair.Item2.Add(GetSay(bundle.Message));
+                twimlPair.Item2.Add(GetGather("10", bundle.BreakUpSequence()));
+                return Content(twimlPair.Item1.ToString(), "application/xml");
             }
             return Content(twimlPair.Item1.ToString(), "application/xml");
         }
@@ -102,6 +112,15 @@ namespace caller.Controllers
             XElement element = new XElement("Say", message);
             element.SetAttributeValue("voice", "alice");
             element.SetAttributeValue("language", "en-US");
+            return element;
+        }
+
+        private XElement GetGather(string timeout, string sequence)
+        {
+            XElement element = new XElement("Gather", GetSay("Please enter the following digits within 10 seconds " + sequence));
+            element.SetAttributeValue("action", TwilioManager.ngrokUrl + "/api/Twilio/Voice/Input");
+            element.SetAttributeValue("timeout", timeout);
+            element.SetAttributeValue("numDigits", "6");
             return element;
         }
     }

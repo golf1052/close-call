@@ -182,7 +182,7 @@ def share_post_using_id(phone, post_id):
 def main():
     # For Testing
     #share_post_using_id("6172300310", '10208690008351449_215666932687')
-    get_old_post('6172300310')
+    return get_old_post('6172300310')
 
 if __name__ == '__main__':
     main()

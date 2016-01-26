@@ -68,7 +68,7 @@ Sign up with [Twilio](https://www.twilio.com/try-twilio). Enter your SID, auth t
     * Open Environment Variables
     * Either create PYTHONPATH or append the path (if you are appending remember to add a ```;``` between the last path
     * Example path: ```C:\path\to\where\you\cloned\this\repo\close-call```
-5. rqworker
+5. ```rqworker```
 
 ## Setting up Twilio backend
 1. Open a new terminal/command line window.

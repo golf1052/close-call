@@ -63,7 +63,7 @@ Sign up with [Twilio](https://www.twilio.com/try-twilio). Enter your SID, auth t
 2. Navigate to where you cloned the repo.
 3. Enter your virtualenv for this project.
 4. ```export PYTHONPATH=/path/to/where/you/cloned/this/repo/close-call```  
-  4a. Basically PYTHON_PATH needs to point to the root of the project.  
+  4a. Basically PYTHONPATH needs to point to the root of the project.  
   4b. This is for OS X/Linux. For Windows:
     * Open the System control panel (under System and Security)
     * Go to Advanced System Settings

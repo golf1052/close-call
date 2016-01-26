@@ -8,6 +8,8 @@ http://hotlinering.com
 
 There are four major components of the service. The Python Flask frontend, the Python core, the Redis server for handling scheduling, and the C# backend for handling Twilio.
 
+These instructions should work for and have been tested on Ubuntu 14.04 (Linux) and OS X (10.10). They should hopefully also work for Windows but that has not been tested yet.
+
 1. Clone this repo to a directory
 2. Enter the directory
 

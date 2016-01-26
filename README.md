@@ -46,7 +46,7 @@ Sign up with [Twilio](https://www.twilio.com/try-twilio). Enter your SID, auth t
 ## Setting up Redis
 1. Open a new terminal/command line window.
 2. Install [Redis](http://redis.io/download).  
-  2a. I haven't tested this on Windows. Hopefully it should work.  
+  2a. I haven't tested this on Windows. Hopefully it should work. Take a look at [this](https://github.com/MSOpenTech/Redis).  
   2b. We were running redis 2.8.6 but any version supported by python-rq should work.
 3. Make sure redis-server is running.  
   3a. Try typing ```redis-cli ping```. If redis-server is running you should see PONG.

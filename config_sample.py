@@ -14,8 +14,5 @@ MONGO_USER = "auser"
 MONGO_PASS = "apassword"
 MONGO_DB = "adatabase"
 
-# venmo user ids
-andrew_id = '0000000000000000'
-sanders_id = '0000000000000000'
-tevin_id = '0000000000000000'
-nat_id = '0000000000000000'
+# Venmo user ids
+VENMO_USER_IDS = ['0000000000000000', '0000000000000000']

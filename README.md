@@ -23,7 +23,7 @@ You need to create a couple of applications and enter configuration information 
 [Create a developer application](https://developers.facebook.com/quickstarts/?platform=web) and then under that application create a test application. from there you can fill in `FACEBOOK_CONSUMER_KEY` as the App ID and `FACEBOOK_CONSUMER_SECRET` as the App Secret in `config.py`. Set the Site URL to your website for production or `http://localhost:5000/` for testing. This will allow you to login with Facebook, but won't actually allow posting to be seen by anyone besides yourself and other admins/testers of your developer application.
 
 ### Venmo
-[Create a developer application](https://venmo.com/account/settings/developer) and set the Web Redirect URL similarly to Facebook, your website for production or `http://localhost:5000/` for testing. You can set `VENMO_CLIENT_ID` to the Application ID and `VENMO_CLIENT_SECRET` to the Application Secret. This will allow you to login with Venmo and send your real money away to real strangers.
+[Create a developer application](https://venmo.com/account/settings/developer) and set the Web Redirect URL similarly to Facebook, your website for production or `http://localhost:5000/` for testing. You can set `VENMO_CLIENT_ID` to the Application ID and `VENMO_CLIENT_SECRET` to the Application Secret. Set `VENMO_USER_IDS` to a list of Venmo User IDs to send money to. These can be obtained from the Venmo API. This will allow you to login with Venmo and send your real money away to real strangers.
 
 ### Indico
 [Follow the instructions to obtain a free API key](https://www.indico.io/docs) and set `INDICO_API_KEY` in the config.

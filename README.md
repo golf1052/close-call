@@ -4,7 +4,7 @@ Socially embarassing wake up calls.
 
 http://hotlinering.com
 
-# Local Setup
+## Local Setup
 
 There are three major components of the service. The Flask web service, the Redis server for scheduling calls, and the C# backend for interacting with Twilio.
 
@@ -77,8 +77,8 @@ Sign up with [Twilio](https://www.twilio.com/try-twilio). Enter your SID, auth t
 3. Follow the instructions [here](https://docs.asp.net/en/latest/getting-started/index.html) to set up dnvm and dnx.
 4. Install/upgrade coreclr: ```dnvm upgrade -r coreclr```.
 5. Make sure you are using coreclr as your runtime.  
-  5a. ```dnvm list```. The latest version should have a * next to it. If not type something like: ```dnvm use 1.0.0-rc1-update1 -a x64 -r coreclr``` where 1.0.0-rc1-update1 is the latest version of the runtime.  
-  5b. This is also a good time to set the latest version to your default. Type: ```dnvm alias default 1.0.0-rc1-update1 -a x64 -r coreclr``` where 1.0.0-rc1-update1 is the latest version of the runtime.
+  a. ```dnvm list```. The latest version should have a * next to it. If not type something like: ```dnvm use 1.0.0-rc1-update1 -a x64 -r coreclr``` where 1.0.0-rc1-update1 is the latest version of the runtime.  
+  b. This is also a good time to set the latest version to your default. Type: ```dnvm alias default 1.0.0-rc1-update1 -a x64 -r coreclr``` where 1.0.0-rc1-update1 is the latest version of the runtime.
 6. ```dnu update```
 7. ```dnx web```
 

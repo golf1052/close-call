@@ -2,7 +2,7 @@ import requests
 
 
 def call(old_post, number):
-    url = 'http://hotlinering.com/api/Twilio/Call'
+    url = 'http://localhost:5999/api/Twilio/Call'
     if old_post:
         r = requests.post(url, data = {"number": number, "cons": 'venmo'})
         print r.content
